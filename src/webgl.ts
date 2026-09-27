@@ -30,7 +30,7 @@
  * comes down square on the facing page and hands over to it seamlessly.
  */
 
-import { foldDepth, foldGeometry, type Point } from "./geometry.ts";
+import { clipHalfPlane, foldDepth, foldGeometry, type Point } from "./geometry.ts";
 import type { PageRef } from "./model.ts";
 import {
   FoldingSheet,
@@ -193,12 +193,15 @@ void main() {
     : (fromSpine < 0.24 ? mix(0.34, 0.0, (fromSpine - 0.08) / 0.16) : 0.0);
   colour *= 1.0 - uGutter * gutter;
 
-  // Off the table and towards the light, as the DOM renderer does it.
-  if (!front) colour = mix(colour, uLiftColor, uLift * uDepth);
+  // Off the table and towards the light, as the DOM renderer does it: the
+  // paper is lightened, not what is printed on it.
+  if (!front) colour += (uLiftColor - uPaper) * (1.0 - image.a) * uLift * uDepth;
 
   vec3 n = normalize(front ? vNormal : -vNormal);
   vec3 light = normalize(vec3(-0.35, -0.45, 1.0));
-  float lit = clamp(dot(n, light) / light.z, 0.3, 1.12);
+  // A glint where the curl turns to the light, and no more: brighter than
+  // the page and the print on it looks washed out.
+  float lit = clamp(dot(n, light) / light.z, 0.3, 1.05);
   float shade = 1.0 + (lit - 1.0) * (uShadow / 0.4);
   gl_FragColor = vec4(colour * shade, 1.0);
 }
@@ -535,13 +538,29 @@ class CurlSheet implements SheetRenderer {
     const depth = foldDepth(frame.progress);
     const dark = this.shading.shadow * depth;
 
+    const radius = this.options.radius * frame.width * depth;
+    const { through, normal } = fold.crease;
+
     this.keep.style.clipPath = polygon(fold.leaf);
-    // The shadow the lifted sheet throws on the page it uncovers, as the DOM
-    // renderer draws it.
-    this.cast.style.clipPath = polygon(fold.uncovered);
+    // The shadow the lifted sheet throws on the page it uncovers. A flat fold
+    // uncovers the page from the crease; a curl, from the outside of its
+    // roll, which stands (π/2 − 1) radii back from the crease. Cast from the
+    // crease, the shadow left that strip bare, and it glared white right
+    // under the curl.
+    const back = (Math.PI / 2 - 1) * radius;
+    const edge = { x: through.x + normal.x * back, y: through.y + normal.y * back };
+    const page = [
+      { x: 0, y: 0 },
+      { x: frame.width, y: 0 },
+      { x: frame.width, y: frame.height },
+      { x: 0, y: frame.height },
+    ];
+    this.cast.style.clipPath = polygon(
+      clipHalfPlane(page, (at) => -((at.x - edge.x) * normal.x + (at.y - edge.y) * normal.y)),
+    );
     placeBand(
       this.castBand,
-      fold.cast,
+      { ...fold.cast, x: fold.cast.x + normal.x * back, y: fold.cast.y + normal.y * back },
       `linear-gradient(to right, rgba(0,0,0,${dark.toFixed(3)}), rgba(0,0,0,0))`,
     );
 
@@ -558,9 +577,9 @@ class CurlSheet implements SheetRenderer {
     const lift = parseColour(this.doc, style?.getPropertyValue("--grabfold-lift").trim() ?? "", [1, 1, 1]);
 
     gl.uniform2f(this.uniform("uSize"), width, height);
-    gl.uniform2f(this.uniform("uThrough"), fold.crease.through.x, fold.crease.through.y);
-    gl.uniform2f(this.uniform("uNormal"), fold.crease.normal.x, fold.crease.normal.y);
-    gl.uniform1f(this.uniform("uRadius"), this.options.radius * width * depth);
+    gl.uniform2f(this.uniform("uThrough"), through.x, through.y);
+    gl.uniform2f(this.uniform("uNormal"), normal.x, normal.y);
+    gl.uniform1f(this.uniform("uRadius"), radius);
     gl.uniform4f(this.uniform("uView"), -width, -pad, width * 3, height + pad * 2);
     gl.uniform2f(this.uniform("uEye"), frame.spine === "left" ? 0 : width, height / 2);
     gl.uniform1f(this.uniform("uPerspective"), 1 / (width * 10));
