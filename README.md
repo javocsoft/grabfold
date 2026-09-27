@@ -1,8 +1,26 @@
-# grabfold
+<div align="center">
 
-**A page-turn you can grab anywhere.**
+# 📖 grabfold
 
-![A book turned by hand: the cover swings open, a page is taken low and the crease tilts with the hand, a corner lifts under the mouse and a flick sends it over.](./docs/grabfold.gif)
+### A page-turn you can grab anywhere — the page folds from the exact point you take hold of it.
+
+[![npm](https://img.shields.io/npm/v/grabfold?label=npm&color=success)](https://www.npmjs.com/package/grabfold)
+[![CI](https://github.com/javocsoft/grabfold/actions/workflows/ci.yml/badge.svg)](https://github.com/javocsoft/grabfold/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+![Dependencies: 0](https://img.shields.io/badge/dependencies-0-success)
+![Core: 11 kB min+gz](https://img.shields.io/badge/core-11%20kB%20min%2Bgz-informational)
+![TypeScript](https://img.shields.io/badge/TypeScript-ready-3178C6)
+![React · Vue · Svelte · Web Components](https://img.shields.io/badge/React%20%C2%B7%20Vue%20%C2%B7%20Svelte%20%C2%B7%20Web%20Components-supported-4A90D9)
+
+<img src="docs/grabfold.gif" alt="A book turned by hand: the cover swings open, a page is taken low and the crease tilts with the hand, a corner lifts under the mouse and a flick sends it over." width="480">
+
+**[Live demo and configurator](https://javocsoft.github.io/grabfold/)** ·
+[Examples](./examples) ·
+[npm](https://www.npmjs.com/package/grabfold)
+
+</div>
+
+---
 
 Most page-flip libraries fold a page from a corner. grabfold folds it from wherever you take hold of it: grab the edge high or low and the crease starts there; move your hand up or down as you pull and the crease tilts with it, the way paper really does. The page stays bound to the spine however wildly it is dragged, and it lands square on the facing page.
 
