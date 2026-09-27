@@ -1,0 +1,26 @@
+{
+  "takes": [
+    {
+      "file": "page-turn-1.mp3",
+      "landsAt": 0.5739
+    },
+    {
+      "file": "page-turn-2.mp3",
+      "landsAt": 0.5907
+    },
+    {
+      "file": "page-turn-3.mp3",
+      "landsAt": 0.5892
+    }
+  ],
+  "boards": [
+    {
+      "file": "board-turn-1.mp3",
+      "landsAt": 0.602
+    },
+    {
+      "file": "board-turn-2.mp3",
+      "landsAt": 0.5838
+    }
+  ]
+}

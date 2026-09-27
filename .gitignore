@@ -1,0 +1,9 @@
+node_modules/
+dist/
+examples/*/dist/
+*.log
+.DS_Store
+_site/
+playwright-report/
+test-results/
+docs/*.webm

@@ -1,0 +1,47 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "grabfold": [
+        "./src/index.ts"
+      ],
+      "grabfold/react": [
+        "./src/react.tsx"
+      ],
+      "grabfold/sound": [
+        "./src/sound.ts"
+      ],
+      "grabfold/sounds": [
+        "./src/sounds.ts"
+      ],
+      "grabfold/webgl": [
+        "./src/webgl.ts"
+      ],
+      "grabfold/element": [
+        "./src/element.ts"
+      ],
+      "grabfold/vue": [
+        "./src/vue.ts"
+      ],
+      "grabfold/svelte": [
+        "./src/svelte.ts"
+      ],
+      "grabfold/plugins": [
+        "./src/plugins.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "test",
+    "e2e",
+    "playwright.config.ts",
+    "examples/react",
+    "examples/vue"
+  ]
+}

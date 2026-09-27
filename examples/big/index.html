@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>grabfold — a thousand sheets</title>
+<link rel="stylesheet" href="../shared/demo.css">
+<style>
+  .big { height: 100%; display: grid; place-items: center; font: 600 clamp(40px, 9vw, 96px)/1 Georgia, serif; color: hsl(var(--hue) 45% 38%);
+         background: radial-gradient(circle at 50% 45%, hsl(var(--hue) 60% 90%), #fbf8f1 70%); }
+  .big small { display: block; font: 12px system-ui; color: #8f8878; letter-spacing: .12em; text-transform: uppercase; text-align: center; margin-top: 8px; }
+  .stats { text-align: center; color: #5d5a52; font-variant-numeric: tabular-nums; }
+  #goto { width: min(560px, 90%); }
+</style>
+</head>
+<body>
+  <main class="demo">
+    <header>
+      <h1>A thousand sheets</h1>
+      <p>Two thousand pages, and only the handful on show are ever in the DOM. Take a block of pages from the edge of either stack — nearer the outside takes more.</p>
+    </header>
+    <div id="book" class="book"></div>
+    <p class="stats"><span id="where"></span> · <span id="dom"></span></p>
+    <p class="jump"><input type="range" id="goto" min="-1" max="998" value="-1" aria-label="Go to"></p>
+  </main>
+  <script type="module">
+    import { Grabfold } from "../../dist/index.js";
+
+    const SHEETS = 1000;
+    let painted = 0;
+    const book = new Grabfold(document.getElementById("book"), {
+      sheets: SHEETS,
+      covers: "none",
+      label: "A thousand sheets",
+      thickness: 14,
+      render(slot, page) {
+        const number = page.sheet * 2 + (page.kind === "back" ? 2 : 1);
+        slot.innerHTML = `<div class="big" style="--hue:${(number * 7) % 360}">${number}<small>of ${SHEETS * 2}</small></div>`;
+        painted += 1;
+      },
+    });
+
+    const where = document.getElementById("where");
+    const dom = document.getElementById("dom");
+    const goto = document.getElementById("goto");
+    const update = () => {
+      const { left, right } = book.view;
+      const n = (p) => p.sheet * 2 + (p.kind === "back" ? 2 : 1);
+      where.textContent = [left, right].filter(Boolean).map(n).join("–");
+      dom.textContent = `${document.querySelectorAll(".grabfold-content").length} pages in the DOM, ${painted} painted so far`;
+      goto.value = String(book.position);
+    };
+    book.on("change", update);
+    goto.addEventListener("change", () => book.turnTo(Number(goto.value)));
+    update();
+    window.book = book;
+  </script>
+</body>
+</html>

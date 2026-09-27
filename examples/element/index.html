@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>grabfold — Web Component</title>
+<link rel="stylesheet" href="../shared/demo.css">
+<script type="module" src="../../dist/element.js"></script>
+</head>
+<body>
+  <main class="demo">
+    <header>
+      <h1>&lt;grab-fold&gt;</h1>
+      <p>No framework and no script of your own: the element's children are the pages. The form on page 3 keeps what you type through every turn.</p>
+    </header>
+
+    <grab-fold id="book" class="book" label="A small notebook" page-ratio="0.75">
+      <div data-cover="front" class="page board outside">
+        <p class="eyebrow">A small</p><h2>Notebook</h2><p class="small">Take hold of the cover</p>
+      </div>
+      <div data-cover="front-inside" class="page endpaper"><div class="label"><h2>Inside</h2><p class="hint">Pull the page across.</p></div></div>
+
+      <div class="page swatch"><div class="chip" style="background:#e9a23b"></div><h3>Plain HTML</h3><p class="line">Every child element is one page, in reading order.</p><span class="folio">1</span></div>
+      <div class="page notes" style="--accent:#e9a23b"><p class="eyebrow">Page two</p><div class="ruled"></div><span class="folio">2</span></div>
+      <div class="page swatch">
+        <h3>A form on a page</h3>
+        <label style="display:grid;gap:4px;margin-top:12px">Your name
+          <input style="font:inherit;padding:6px 8px;border:1px solid #cfc7b4;border-radius:6px">
+        </label>
+        <p class="line">Type, turn away, come back: the page is moved, never copied.</p>
+        <span class="folio">3</span>
+      </div>
+      <div class="page notes" style="--accent:#2f8f8a"><p class="eyebrow">Page four</p><div class="ruled"></div><span class="folio">4</span></div>
+      <div class="page swatch"><div class="chip" style="background:#8e6fa8"></div><h3>Attributes</h3><p class="line">covers, binding, layout, page-ratio, fit, thickness, no-peek…</p><span class="folio">5</span></div>
+      <div class="page notes" style="--accent:#8e6fa8"><p class="eyebrow">Page six</p><div class="ruled"></div><span class="folio">6</span></div>
+
+      <div data-cover="back-inside" class="page endpaper"><div class="label"><h2>The end</h2></div></div>
+      <div data-cover="back" class="page board outside back"><p class="small">grabfold — &lt;grab-fold&gt;</p></div>
+    </grab-fold>
+
+    <nav class="controls" aria-label="Pages">
+      <button type="button" onclick="book.prev()">← Previous</button>
+      <span class="where" id="where">Closed</span>
+      <button type="button" onclick="book.next()">Next →</button>
+    </nav>
+    <p class="sound">
+      <label>Binding
+        <select onchange="book.setAttribute('binding', this.value)">
+          <option value="left">Left</option>
+          <option value="right">Right (right to left)</option>
+        </select>
+      </label>
+    </p>
+  </main>
+  <script type="module">
+    const book = document.getElementById("book");
+    // Everything the book does is an event on the element.
+    book.addEventListener("change", (event) => {
+      document.getElementById("where").textContent = `Position ${event.detail.position}`;
+    });
+  </script>
+</body>
+</html>

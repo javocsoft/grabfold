@@ -1,0 +1,134 @@
+{
+  "name": "grabfold",
+  "version": "0.1.0",
+  "description": "A page-turn you can grab anywhere. Realistic page flip / flipbook effect: the page folds from the exact point you take hold of it, and the crease tilts with your hand. Flicks, hover peeks, page-block grabs, hard covers, right-to-left and calendar bindings, an optional WebGL curl, page-turn sounds, and adapters for React, Vue, Svelte and Web Components. Zero dependencies.",
+  "keywords": [
+    "page flip",
+    "page-flip",
+    "pageflip",
+    "flipbook",
+    "page turn",
+    "book",
+    "magazine",
+    "album",
+    "fold",
+    "react",
+    "react-pageflip",
+    "animation",
+    "sound effects",
+    "vue",
+    "svelte",
+    "web component",
+    "webgl",
+    "pdf",
+    "calendar",
+    "rtl"
+  ],
+  "author": "JavocSoft",
+  "license": "MIT",
+  "homepage": "https://github.com/JavocSoft/grabfold#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JavocSoft/grabfold.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JavocSoft/grabfold/issues"
+  },
+  "type": "module",
+  "sideEffects": [
+    "./dist/element.js",
+    "./src/element.ts"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./sound": {
+      "types": "./dist/sound.d.ts",
+      "import": "./dist/sound.js"
+    },
+    "./sounds": {
+      "types": "./dist/sounds.d.ts",
+      "import": "./dist/sounds.js"
+    },
+    "./webgl": {
+      "types": "./dist/webgl.d.ts",
+      "import": "./dist/webgl.js"
+    },
+    "./element": {
+      "types": "./dist/element.d.ts",
+      "import": "./dist/element.js"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "import": "./dist/vue.js"
+    },
+    "./svelte": {
+      "types": "./dist/svelte.d.ts",
+      "import": "./dist/svelte.js"
+    },
+    "./plugins": {
+      "types": "./dist/plugins.d.ts",
+      "import": "./dist/plugins.js"
+    },
+    "./sounds/*.mp3": "./sounds/*.mp3",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "sounds",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.check.json",
+    "test": "node --test \"test/*.test.ts\"",
+    "check": "npm run typecheck && npm test && npm run build",
+    "demo": "npm run build && npm run examples && node scripts/serve.mjs",
+    "prepublishOnly": "npm run check",
+    "sounds": "node scripts/sounds/embed.mjs",
+    "examples": "node scripts/build-examples.mjs",
+    "site": "npm run build && npm run examples && node scripts/build-site.mjs",
+    "e2e": "playwright test",
+    "gif": "npm run build && node scripts/record-gif.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "vue": ">=3.3"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "esbuild": "^0.25.0",
+    "pdfjs-dist": "^6.3.289",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "svelte": "^5.57.1",
+    "typescript": "^5.9.0",
+    "vue": "^3.5.43"
+  }
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>grabfold — a desk calendar</title>
+<link rel="stylesheet" href="../shared/demo.css">
+<style>
+  .book { max-width: 560px; }
+  .art { height: 100%; display: grid; place-items: end start; padding: 7%; color: #fff; font: 600 clamp(28px, 6vw, 44px)/1 Georgia, serif; }
+  .art small { display: block; font: 12px system-ui; letter-spacing: .2em; text-transform: uppercase; opacity: .8; margin-bottom: 6px; }
+  .month { height: 100%; padding: 5% 7%; display: flex; flex-direction: column; }
+  .month h3 { margin: 0 0 8px; font: 600 18px Georgia, serif; }
+  .days { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; gap: 2px; font: 12px system-ui; }
+  .days span { display: grid; place-items: center; border-radius: 4px; }
+  .days .head { color: #9a9486; font-size: 10px; text-transform: uppercase; }
+  .days .day { background: rgba(0,0,0,.035); }
+  .days .sun { color: #b4533a; }
+</style>
+</head>
+<body>
+  <main class="demo">
+    <header>
+      <h1>A desk calendar</h1>
+      <p><code>binding: "top"</code>: bound along the top, turned upwards. Pull a month up and over; <kbd>↓</kbd> and <kbd>↑</kbd> turn it from the keyboard.</p>
+    </header>
+    <div id="book" class="book"></div>
+    <nav class="controls">
+      <button type="button" id="prev">↑ Previous month</button>
+      <button type="button" id="next">Next month ↓</button>
+    </nav>
+  </main>
+  <script type="module">
+    import { Grabfold } from "../../dist/index.js";
+
+    const YEAR = new Date().getFullYear();
+    const HUES = [210, 190, 150, 110, 80, 45, 25, 10, 340, 300, 260, 230];
+    const name = (month) => new Date(YEAR, month, 1).toLocaleString("en", { month: "long" });
+
+    const art = (month) => `<div class="art" style="background:
+        radial-gradient(circle at 70% 30%, hsl(${HUES[month]} 70% 70%), transparent 55%),
+        linear-gradient(160deg, hsl(${HUES[month]} 55% 45%), hsl(${(HUES[month] + 40) % 360} 50% 25%))">
+        <div><small>${YEAR}</small>${name(month)}</div></div>`;
+
+    const grid = (month) => {
+      const start = (new Date(YEAR, month, 1).getDay() + 6) % 7; // Monday first
+      const days = new Date(YEAR, month + 1, 0).getDate();
+      const cells = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((d) => `<span class="head">${d}</span>`);
+      for (let i = 0; i < start; i += 1) cells.push("<span></span>");
+      for (let day = 1; day <= days; day += 1) {
+        cells.push(`<span class="day${(start + day - 1) % 7 === 6 ? " sun" : ""}">${day}</span>`);
+      }
+      return `<div class="month"><h3>${name(month)} ${YEAR}</h3><div class="days">${cells.join("")}</div></div>`;
+    };
+
+    // Open, the upper page is a month's picture and the lower its days: the
+    // picture is on the back of the sheet before, January's on the inside cover.
+    const book = new Grabfold(document.getElementById("book"), {
+      sheets: 12,
+      covers: "inside",
+      binding: "top",
+      layout: "spread",
+      pageRatio: 3 / 2,
+      label: `Calendar ${YEAR}`,
+      position: -1,
+      render(slot, page) {
+        if (page.kind === "cover") {
+          slot.innerHTML = page.side === "front" ? art(0) : `<div class="art" style="background:#2b2d42"><div>${YEAR + 1}</div></div>`;
+        } else if (page.kind === "front") slot.innerHTML = grid(page.sheet);
+        else slot.innerHTML = page.sheet < 11 ? art(page.sheet + 1) : `<div class="art" style="background:#2b2d42"><div><small>See you in</small>${YEAR + 1}</div></div>`;
+      },
+    });
+    document.getElementById("prev").onclick = () => book.prev();
+    document.getElementById("next").onclick = () => book.next();
+    window.book = book;
+  </script>
+</body>
+</html>

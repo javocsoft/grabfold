@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>grabfold visual fixture</title>
+<style>
+  /* No text anywhere: fonts differ between machines, shapes do not. */
+  body { margin: 0; background: #e8e5dc; }
+  #book { width: 800px; margin: 40px auto 0; --grabfold-board: #1f4f5a; }
+  .p { position: absolute; inset: 0; }
+  .p i { position: absolute; left: 12%; right: 12%; border-radius: 6px; }
+</style>
+</head>
+<body>
+  <div id="book"></div>
+  <script type="module">
+    import { Grabfold } from "/dist/index.js";
+    const HUES = [30, 175, 12, 275, 90, 210];
+    const pageHTML = (page) => {
+      if (page.kind === "cover") {
+        return page.face === "outside"
+          ? `<div class="p" style="background:#1f4f5a"><i style="top:40%;height:12%;background:#f1e6c8"></i></div>`
+          : `<div class="p" style="background:#f1ead9"><i style="top:30%;height:30%;background:#d9cdb0"></i></div>`;
+      }
+      const hue = HUES[page.sheet % HUES.length];
+      return page.kind === "front"
+        ? `<div class="p"><i style="top:10%;height:45%;background:hsl(${hue} 55% 50%)"></i><i style="top:62%;height:4%;background:#cfc7b4"></i></div>`
+        : `<div class="p">${[20, 32, 44, 56, 68, 80].map((top) => `<i style="top:${top}%;height:1.2%;background:hsl(${hue} 30% 70%)"></i>`).join("")}</div>`;
+    };
+    const params = new URLSearchParams(location.search);
+    window.book = new Grabfold(document.getElementById("book"), {
+      sheets: 6,
+      covers: params.get("covers") ?? "inside",
+      binding: params.get("binding") ?? "left",
+      layout: "spread",
+      position: Number(params.get("position") ?? 1),
+      peek: false,
+      reducedMotion: false,
+      render(slot, page) { slot.innerHTML = pageHTML(page); },
+    });
+  </script>
+</body>
+</html>
